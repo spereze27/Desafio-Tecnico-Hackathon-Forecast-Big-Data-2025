@@ -1,5 +1,15 @@
 .venv
+models
 pdvs
 productos
 silver
+submission_final_unificada
+submission_parquet
+submission_parquet_2
+submission_parquet_3
+submission_temp
 transacoes
+unificada_corregida
+comparativa.ipynb
+eda.py
+features_engineering.ipynb
