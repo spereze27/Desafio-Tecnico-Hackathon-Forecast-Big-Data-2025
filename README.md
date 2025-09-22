@@ -226,3 +226,67 @@ El diagrama de cajas y bigotes revela un patrón claro en el comportamiento de c
 -   **Días de Mayor Actividad:** Por el contrario, el inicio de la semana (**lunes y martes**) y el fin de semana (**sábado y domingo**) muestran una distribución de ventas más alta y con mayor dispersión, indicando un volumen de transacciones superior.
 
 Esta información es valiosa para el modelo, ya que confirma que el **día de la semana es una característica importante** que influye directamente en la cantidad de productos vendidos.
+
+## 🧠 Modelado y Pronóstico
+
+Con los datos limpios y las características diseñadas, el siguiente paso es construir, entrenar y evaluar un modelo de Machine Learning capaz de pronosticar la demanda semanal.
+
+---
+
+### 1. Ingeniería de Características (Feature Engineering)
+
+El rendimiento del modelo depende directamente de la calidad de las características (features) que se le proporcionen. Se crearon varias features para capturar diferentes aspectos del comportamiento de las ventas:
+
+-   **Agregación Temporal:** La base del modelo es la agregación de las transacciones a nivel semanal por cada combinación de `pdv` (punto de venta) y `produto`.
+-   **Features de Ventana Móvil (Lag & Rolling Average):** Se crearon características de `lag` (ventas de 1, 2 y 4 semanas anteriores) y promedios móviles. Estas features son **cruciales** para los modelos de series temporales, ya que le informan al modelo sobre la tendencia y el momentum de las ventas recientes.
+-   **Features de Calendario:** Se extrajeron características como el `mes` y el `trimestre`. Además, se creó una feature binaria (`es_semana_importante`) que marca las semanas que contienen festivos o eventos comerciales importantes (como Black Friday o Navidad), ayudando al modelo a aprender sobre la estacionalidad y los picos de demanda.
+-   **Features Descriptivas y de Precio:** Se reincorporaron las características categóricas del producto y del punto de venta para darle contexto al modelo. También se calculó el `precio_promedio_prod` para que el modelo pueda inferir la relación entre el precio y la cantidad vendida.
+
+---
+
+### 2. Construcción del Pipeline de Machine Learning
+
+Para asegurar que todas las transformaciones se apliquen de manera consistente tanto en el entrenamiento como en la predicción, se utilizó un **`Pipeline` de PySpark**. Este pipeline define el flujo de trabajo completo:
+
+1.  **`StringIndexer`:** Convierte todas las columnas categóricas (como `categoria` o `label`) en índices numéricos, ya que los modelos de machine learning operan con números.
+2.  **`FeatureHasher`:** Toma los múltiples índices categóricos y los convierte en un único vector de características de tamaño fijo (1024 en este caso). Esta es una técnica eficiente para manejar una gran cantidad de categorías sin crear una cantidad excesiva de columnas.
+3.  **`VectorAssembler`:** Une el vector de características categóricas (del `FeatureHasher`) con todas las características numéricas (lags, promedios, calendario, etc.) en un único vector llamado `"features"`.
+4.  **`GBTRegressor`:** El estimador final, que tomará el vector `"features"` para predecir la cantidad de ventas.
+
+---
+
+### 3. Elección del Modelo: Gradient Boosted Trees (GBT)
+
+Se eligió el modelo **Gradient Boosted Trees (GBT)** por varias razones estratégicas:
+
+-   **Alto Rendimiento:** Los modelos basados en árboles de decisión, y en particular los ensambles como GBT, son conocidos por su excelente rendimiento en datos tabulares como este, ya que pueden capturar relaciones complejas y no lineales entre las características.
+-   **Robustez:** GBT es robusto frente a valores atípicos y no requiere que las características numéricas estén escaladas, lo que simplifica el preprocesamiento.
+-   **Manejo de Interacciones:** Captura de forma natural las interacciones entre diferentes características. Por ejemplo, podría aprender que un `label` específico se vende más en una `categoria_pdv` particular solo durante un `mes` concreto.
+-   **Escalabilidad:** La implementación de GBT en Spark está diseñada para ejecutarse de manera distribuida en grandes volúmenes de datos, lo que es ideal para un contexto de Big Data.
+
+---
+
+### 4. Entrenamiento y Optimización del Modelo
+
+El proceso de entrenamiento se realizó de la siguiente manera:
+
+1.  **División Temporal de Datos:** Se realizó una división **temporal** de los datos. El modelo se entrenó con los datos hasta la semana 40 (`train_data`) y se evaluó su rendimiento en las semanas 41 a 49 (`test_data`). Esta división es fundamental en problemas de series temporales para simular un escenario real donde se predice el futuro basándose en el pasado.
+2.  **Optimización de Hiperparámetros:** En lugar de elegir manualmente los parámetros del modelo (como la profundidad de los árboles), se utilizó un **`CrossValidator`** con una grilla de parámetros (`ParamGridBuilder`). Este proceso prueba automáticamente múltiples combinaciones de hiperparámetros en una muestra de los datos de entrenamiento y selecciona la que ofrece el mejor rendimiento (menor RMSE), asegurando que el modelo esté bien calibrado.
+3.  **Entrenamiento Final:** Una vez encontrados los mejores hiperparámetros, se entrenó el pipeline final utilizando el **conjunto completo de datos de entrenamiento**.
+
+---
+
+### 5. Generación de Predicciones para Enero 2023
+
+El paso final es utilizar el modelo entrenado para pronosticar las ventas de las primeras 5 semanas de 2023. Para ello, se tuvo que construir un DataFrame con la estructura que el modelo espera.
+
+#### ¿Cómo se seleccionaron los productos a predecir?
+
+No tiene sentido predecir las ventas de todas las combinaciones posibles de producto-tienda, ya que muchas pueden estar inactivas. Se aplicó un filtro basado en la lógica de negocio para enfocar el pronóstico solo en los productos **relevantes y activos**:
+
+1.  **Filtro por Actividad Reciente:** Primero, se seleccionaron únicamente las ventas ocurridas después de la semana 42 de 2022. Esto asegura que solo se consideren los productos y tiendas que han tenido **actividad en los últimos dos meses del año**.
+2.  **Filtro por Frecuencia:** Sobre este subconjunto reciente, se agruparon los datos por `pdv` y `produto` y se contó en cuántas semanas distintas se vendió cada uno. Se conservaron únicamente aquellas combinaciones que tuvieron ventas en **al menos 2 semanas diferentes** durante este período reciente.
+
+Este doble filtro es clave porque **aísla las combinaciones de producto-tienda que tienen una actividad comercial constante y reciente**, eliminando productos esporádicos o descatalogados. Esto hace que las predicciones sean más estables, relevantes y computacionalmente eficientes.
+
+Finalmente, para estas combinaciones filtradas, se generaron las características de lag y promedios móviles **utilizando los datos de las últimas semanas de 2022** como una aproximación de cómo empezarían en 2023, permitiendo así que el modelo realizara las predicciones.
