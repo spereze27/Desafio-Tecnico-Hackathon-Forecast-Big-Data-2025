@@ -89,3 +89,73 @@ Aquí se almacena la información de los diferentes puntos de venta.
 A continuación se muestra el esquema de la relación entre las tablas:
 
 ![Diagrama de relación de tablas de la base de datos](https://raw.githubusercontent.com/spereze27/Desafio-Tecnico-Hackathon-Forecast-Big-Data-2025/main/union_tablas.png)
+
+## 🧹 Preprocesamiento Básico
+
+Antes de realizar el análisis y modelado, se llevó a cabo un preprocesamiento básico de los datos para asegurar su calidad y consistencia. Este proceso se dividió en tres pasos principales:
+
+### 1. Gestión de Valores Nulos
+
+Se identificó la cantidad de valores nulos por cada columna.
+
+-   La característica `label` era la única con una cantidad considerable de valores ausentes (aproximadamente un 8%). Para no perder estos registros, se decidió imputar estos valores asignándoles la categoría **`sem_label`**.
+-   Para el resto de las columnas (`premise`, `categoria_pdv`, `zipcode` y `subcategoria`), que contenían un porcentaje muy bajo de nulos (menos del 1%), se optó por eliminar las filas correspondientes.
+
+A continuación, se muestra el porcentaje de valores nulos por columna antes de la limpieza:
+
+| pdv | produto | distributor_id | transaction_date | reference_date | quantity | gross_value | net_value | gross_profit | discount | taxes | categoria | descricao | tipos | label | subcategoria | marca | fabricante | premise | categoria_pdv | zipcode |
+|:---:|:-------:|:--------------:|:----------------:|:--------------:|:--------:|:-----------:|:---------:|:------------:|:--------:|:-----:|:---------:|:---------:|:-----:|:-----:|:------------:|:-----:|:----------:|:-------:|:-------------:|:-------:|
+| 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | **8.03%** | **0.16%** | 0.0 | 0.0 | **0.69%** | **0.69%** | **0.69%** |
+
+---
+
+### 2. Normalización de Variables Categóricas
+
+Para evitar inconsistencias y duplicidad en las categorías, se aplicaron las siguientes transformaciones a las columnas de tipo texto:
+
+-   **Conversión a mayúsculas:** Todas las cadenas de texto se convirtieron a mayúsculas.
+-   **Eliminación de espacios:** Se eliminaron los espacios en blanco al inicio y al final de cada texto.
+
+Esto asegura que categorías idénticas pero con diferente formato (p. ej., `Specialty` y `specialty`) sean tratadas como una sola, unificándolas como `SPECIALTY`.
+
+---
+
+### 3. Verificación del Esquema de Datos
+
+Finalmente, se revisó que el tipo de dato de cada columna fuera coherente con los valores que contenía. Por ejemplo, se verificó que las columnas de fechas tuvieran el formato de fecha adecuado y que las columnas numéricas no contuvieran caracteres extraños.
+
+## 📈 Análisis de Ventas Semanales
+
+Para entender la estacionalidad y el comportamiento de las ventas, se realizó un análisis de la cantidad total de productos vendidos por cada semana del año 2022.
+
+### Comportamiento a lo Largo del Año
+
+Al visualizar las ventas semanales, se observa un patrón mayormente estable durante todo el año, con una excepción notable: un **pico de ventas extremadamente alto** entre las semanas 30 y 40.
+
+![Gráfico de ventas totales por semana en 2022](https://raw.githubusercontent.com/spereze27/Desafio-Tecnico-Hackathon-Forecast-Big-Data-2025/main/Captura%20desde%202025-09-21%2022-10-00.png)
+
+Una investigación más profunda reveló que este comportamiento anómalo se concentraba específicamente en la **semana 36**.
+
+---
+
+### Investigación de la Anomalía en la Semana 36
+
+Para determinar la causa del pico, se analizó si el aumento en las ventas se debía a un producto o a un punto de venta (PDV) específico. Se agruparon las ventas de esa semana por PDV para identificar a los principales contribuyentes.
+
+**Top 5 Puntos de Venta (PDV) por Ventas en la Semana 36**
+
+| pdv                 | categoria_pdv  | sum(quantity)      |
+| ------------------- | -------------- | ------------------ |
+| `6491855528940268514` | `PACKAGE/LIQUOR` | 176,202.57         |
+| `3025867614395044464` | `PACKAGE/LIQUOR` | 170,252.53         |
+| `8723723113467008071` | `PACKAGE/LIQUOR` | 132,026.31         |
+| `4304226119364518876` | `PACKAGE/LIQUOR` | 130,715.99         |
+| `9171644843739559005` | `PACKAGE/LIQUOR` | 126,486.75         |
+
+El análisis demostró que el aumento **no se debía a un único producto o punto de venta**, sino que fue un comportamiento generalizado durante toda esa semana.
+
+---
+
+### Conclusión y Acción Tomada
+
+Dado que el comportamiento de la semana 36 es un **valor atípico (outlier)** que no representa la tendencia general de ventas, se tomó la decisión de **excluir todos los datos correspondientes a esa semana**. Esta medida se implementó para evitar que esta anomalía introdujera ruido y afectara negativamente el rendimiento del modelo de pronóstico.
