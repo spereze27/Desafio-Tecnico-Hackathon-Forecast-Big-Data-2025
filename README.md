@@ -205,6 +205,24 @@ Finalmente, se exploró la relación entre el descuento aplicado y la cantidad v
 
 ![Gráfico de dispersión de descuento vs cantidad vendida](https://raw.githubusercontent.com/spereze27/Desafio-Tecnico-Hackathon-Forecast-Big-Data-2025/main/dispersion%20con%20reembolsos.png)
 
-**Decisión y Justificación:**
 
 El objetivo de este proyecto es construir un modelo para **predecir la demanda futura (ventas)**, no para pronosticar devoluciones. Por lo tanto, se tomó la decisión de **eliminar todos los registros con cantidades negativas**. Esto evita introducir ruido en el modelo y le permite generalizar mejor los patrones de compra reales.
+
+Una vez eliminados los productos reembolsados se tiene la siguiente dispersión en donde se  muestra que la mayoria de clientes compra una cantidad reducida de productos con un descuento moderado pero que a medida que se aumenta el descuento se tienen compras en grandes cantidades de un producto.
+
+![Gráfico de dispersión de descuento vs cantidad vendida](https://github.com/spereze27/Desafio-Tecnico-Hackathon-Forecast-Big-Data-2025/blob/main/Captura%20desde%202025-09-21%2023-27-26.png)
+
+## 📦 Distribución de Ventas por Día de la Semana
+
+Para completar el análisis exploratorio, se examinó cómo se distribuyen las ventas a lo largo de los días de la semana. Esta visualización nos permite identificar qué días son comercialmente más fuertes.
+
+![Distribución de Ventas por Día de la Semana](https://raw.githubusercontent.com/spereze27/Desafio-Tecnico-Hackathon-Forecast-Big-Data-2025/main/Captura%20desde%202025-09-21%2023-23-20.png)
+
+### Interpretación del Gráfico
+
+El diagrama de cajas y bigotes revela un patrón claro en el comportamiento de compra semanal:
+
+-   **Días de Menor Actividad:** Se observa que los días en medio de la semana, específicamente **miércoles, jueves y viernes**, presentan una mediana de ventas inferior en comparación con el resto de los días. La caja, que representa el 50% central de los datos, también se encuentra en un rango más bajo.
+-   **Días de Mayor Actividad:** Por el contrario, el inicio de la semana (**lunes y martes**) y el fin de semana (**sábado y domingo**) muestran una distribución de ventas más alta y con mayor dispersión, indicando un volumen de transacciones superior.
+
+Esta información es valiosa para el modelo, ya que confirma que el **día de la semana es una característica importante** que influye directamente en la cantidad de productos vendidos.
