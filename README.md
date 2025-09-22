@@ -170,3 +170,41 @@ Al eliminar el valor atípico, se pueden identificar patrones claros en los dato
 3.  **Estacionalidad Visible:** La gráfica ahora revela fluctuaciones y picos estacionales que antes eran opacados por la anomalía, proporcionando una base mucho más fiable para el pronóstico.
 
 Con un conjunto de datos limpio y representativo, podemos proceder con la construcción de un modelo de forecasting más preciso y robusto.
+
+## 🔬 Análisis por Características
+
+Una vez limpios los datos, se realizó un análisis exploratorio segmentando las ventas por diferentes características para entender mejor los factores que influyen en la demanda.
+
+### Ventas por Tipo de Producto (Label)
+
+Al analizar las ventas semanales agrupadas por el `label` del producto, se observa un claro dominador.
+
+-   **Productos `CORE`:** Esta categoría representa la gran mayoría de las ventas y mantiene su liderazgo de manera consistente a lo largo de todo el año.
+-   **Otras categorías:** Las demás etiquetas como `SEM_LABEL`, `DISCONTINUED`, `ALLOCATED` y `INGOUT` tienen un volumen de ventas significativamente menor.
+
+![Ventas semanales por los 5 tipos de producto principales](https://raw.githubusercontent.com/spereze27/Desafio-Tecnico-Hackathon-Forecast-Big-Data-2025/main/producto%20mas%20vendido.png)
+
+---
+
+### Ventas por Categoría de Producto
+
+El análisis de las categorías de producto revela una concentración de las ventas en un solo segmento.
+
+-   **Categoría `PACKAGE`:** Es, por un amplio margen, la categoría con mayor cantidad de unidades vendidas, superando con creces a las demás.
+-   **Otras categorías relevantes:** `DISTILLED SPIRITS` y `NON-ALCOHOL` le siguen en importancia, aunque con un volumen mucho menor.
+
+![Top 10 categorías de producto por cantidad vendida](https://raw.githubusercontent.com/spereze27/Desafio-Tecnico-Hackathon-Forecast-Big-Data-2025/main/categoria%20mas%20vendida.png)
+
+---
+
+### Relación entre Descuento y Cantidad Vendida
+
+Finalmente, se exploró la relación entre el descuento aplicado y la cantidad vendida para identificar patrones de compra. Durante este análisis, se hizo un descubrimiento importante.
+
+-   **Detección de Valores Negativos:** El gráfico de dispersión mostró que existían registros con una **cantidad vendida negativa**. Estos valores atípicos probablemente corresponden a **devoluciones, reembolsos o ajustes de inventario**.
+
+![Gráfico de dispersión de descuento vs cantidad vendida](https://raw.githubusercontent.com/spereze27/Desafio-Tecnico-Hackathon-Forecast-Big-Data-2025/main/dispersion%20con%20reembolsos.png)
+
+**Decisión y Justificación:**
+
+El objetivo de este proyecto es construir un modelo para **predecir la demanda futura (ventas)**, no para pronosticar devoluciones. Por lo tanto, se tomó la decisión de **eliminar todos los registros con cantidades negativas**. Esto evita introducir ruido en el modelo y le permite generalizar mejor los patrones de compra reales.
