@@ -40,40 +40,52 @@ El conjunto de datos de transacciones contiene **más de 6 millones de registros
 
 #### 3. Estructura y Relación de los Datos
 
-Los datos se encuentran distribuidos en tres tablas principales: `productos`, `pdvs` (puntos de venta) y `transacoes` (transacciones). La tabla `transacoes` actúa como la tabla de hechos, conectándose con las otras dos a través de las claves `produto` y `pdv`.
+Los datos se encuentran distribuidos en tres tablas principales: `productos`, `pdvs` (puntos de venta) y `transacoes` (transacciones). La tabla `transacoes` actúa como la tabla de hechos, conectándose con las otras dos a través de las claves foráneas `produto` y `pdv`.
 
-*<-- Aquí puedes insertar la imagen de tu esquema de datos -->*
+A continuación se muestra el esquema de la relación entre las tablas:
 
-A continuación se muestra una vista previa de cada tabla:
+![Diagrama de relación de tablas de la base de datos](https://raw.githubusercontent.com/spereze27/Desafio-Tecnico-Hackathon-Forecast-Big-Data-2025/main/union_tablas.png)
 
-**Datos de Productos**
-+-------------------+-----------------+--------------------+
-|            produto|        categoria|           descricao|
-+-------------------+-----------------+--------------------+
-|2282334733936076502|Distilled Spirits|JOSEPH CARTRON CA...|
-|6091840953834683482|Distilled Spirits|SPRINGBANK 18 YEA...|
-|1968645851245092408|Distilled Spirits|J BRANDT TRIPLE S...|
-| 994706710729219179|            Draft|REFORMATION CASHM...|
-|9209550539540384349|      Non-Alcohol|HELLA MOSCOW MULE...|
-+-------------------+-----------------+--------------------+
+A continuación, se presenta una vista previa del contenido de cada tabla.
 
-**Datos de Transacciones**
-+-------------------+-------------------+----------------+--------+
-|                pdv|            produto|transaction_date|quantity|
-+-------------------+-------------------+----------------+--------+
-|7384367747233276219| 328903483604537190|      2022-07-13|     1.0|
-|3536908514005606262|5418855670645487653|      2022-03-21|     6.0|
-|3138231730993449825|1087005562675741887|      2022-09-06|     3.0|
-|3681167389484217654|1401422983880045188|      2022-09-11|   129.0|
-|7762413312337359369|6614994347738381720|      2022-02-18|     1.0|
-+-------------------+-------------------+----------------+--------+
-**Datos de PDVs (Puntos de Venta)**
-+-------------------+-----------+-------------+-------+
-|                pdv|    premise|categoria_pdv|zipcode|
-+-------------------+-----------+-------------+-------+
-|2204965430669363375| On Premise| Mexican Rest|  30741|
-|5211957289528622910| On Premise|  Hotel/Motel|  80011|
-|9024493554530757353|Off Premise|  Convenience|  80751|
-|8659197371382902429| On Premise|    Restaurant|  80439|
-|1400854873763881130| On Premise|    Restaurant|  30093|
-+-------------------+-----------+-------------+-------+
+---
+
+### 🛍️ Datos de Productos
+
+Esta tabla contiene la información detallada de cada producto.
+
+| produto             | categoria         | descricao                |
+| ------------------- | ----------------- | ------------------------ |
+| `2282334733936076502` | `Distilled Spirits` | `JOSEPH CARTRON CA...`   |
+| `6091840953834683482` | `Distilled Spirits` | `SPRINGBANK 18 YEA...`   |
+| `1968645851245092408` | `Distilled Spirits` | `J BRANDT TRIPLE S...`   |
+| `994706710729219179`  | `Draft`             | `REFORMATION CASHM...`   |
+| `9209550539540384349` | `Non-Alcohol`       | `HELLA MOSCOW MULE...`   |
+
+---
+
+### 🛒 Datos de Transacciones
+
+Esta es la tabla de hechos que registra cada venta, vinculando un producto con un punto de venta.
+
+| pdv                 | produto             | transaction_date | quantity |
+| ------------------- | ------------------- | ---------------- | -------- |
+| `7384367747233276219` | `328903483604537190`  | `2022-07-13`     | `1.0`      |
+| `3536908514005606262` | `5418855670645487653` | `2022-03-21`     | `6.0`      |
+| `3138231730993449825` | `1087005562675741887` | `2022-09-06`     | `3.0`      |
+| `3681167389484217654` | `1401422983880045188` | `2022-09-11`     | `129.0`    |
+| `7762413312337359369` | `6614994347738381720` | `2022-02-18`     | `1.0`      |
+
+---
+
+### 🏪 Datos de PDVs (Puntos de Venta)
+
+Aquí se almacena la información de los diferentes puntos de venta.
+
+| pdv                 | premise     | categoria_pdv  | zipcode |
+| ------------------- | ----------- | -------------- | ------- |
+| `2204965430669363375` | `On Premise`  | `Mexican Rest` | `30741` |
+| `5211957289528622910` | `On Premise`  | `Hotel/Motel`  | `80011` |
+| `9024493554530757353` | `Off Premise` | `Convenience`  | `80751` |
+| `8659197371382902429` | `On Premise`  | `Restaurant`   | `80439` |
+| `1400854873763881130` | `On Premise`  | `Restaurant`   | `30093` |
