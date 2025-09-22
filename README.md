@@ -153,9 +153,20 @@ Para determinar la causa del pico, se analizó si el aumento en las ventas se de
 | `9171644843739559005` | `PACKAGE/LIQUOR` | 126,486.75         |
 
 El análisis demostró que el aumento **no se debía a un único producto o punto de venta**, sino que fue un comportamiento generalizado durante toda esa semana.
-
----
-
-### Conclusión y Acción Tomada
-
 Dado que el comportamiento de la semana 36 es un **valor atípico (outlier)** que no representa la tendencia general de ventas, se tomó la decisión de **excluir todos los datos correspondientes a esa semana**. Esta medida se implementó para evitar que esta anomalía introdujera ruido y afectara negativamente el rendimiento del modelo de pronóstico.
+
+## 📊 Visualización de Ventas Post-Limpieza
+
+Tras excluir la semana 36, el comportamiento de las ventas a lo largo del año se puede apreciar con mayor claridad. La nueva gráfica muestra una tendencia mucho más coherente y representativa de la estacionalidad del negocio.
+
+![Gráfico de ventas totales por semana en 2022 sin la semana 36](https://raw.githubusercontent.com/spereze27/Desafio-Tecnico-Hackathon-Forecast-Big-Data-2025/main/Captura%20desde%202025-09-21%2022-21-49.png)
+
+### Observaciones Clave
+
+Al eliminar el valor atípico, se pueden identificar patrones claros en los datos:
+
+1.  **Tendencia Creciente:** Se observa una tendencia general al alza en las ventas a medida que avanza el año.
+2.  **Picos de Fin de Año:** Las ventas alcanzan su punto máximo durante el último trimestre del año (semanas 45-52), lo cual es consistente con el aumento de la demanda durante las temporadas festivas.
+3.  **Estacionalidad Visible:** La gráfica ahora revela fluctuaciones y picos estacionales que antes eran opacados por la anomalía, proporcionando una base mucho más fiable para el pronóstico.
+
+Con un conjunto de datos limpio y representativo, podemos proceder con la construcción de un modelo de forecasting más preciso y robusto.
