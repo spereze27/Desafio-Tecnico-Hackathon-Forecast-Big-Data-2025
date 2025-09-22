@@ -42,10 +42,6 @@ El conjunto de datos de transacciones contiene **más de 6 millones de registros
 
 Los datos se encuentran distribuidos en tres tablas principales: `productos`, `pdvs` (puntos de venta) y `transacoes` (transacciones). La tabla `transacoes` actúa como la tabla de hechos, conectándose con las otras dos a través de las claves foráneas `produto` y `pdv`.
 
-A continuación se muestra el esquema de la relación entre las tablas:
-
-![Diagrama de relación de tablas de la base de datos](https://raw.githubusercontent.com/spereze27/Desafio-Tecnico-Hackathon-Forecast-Big-Data-2025/main/union_tablas.png)
-
 A continuación, se presenta una vista previa del contenido de cada tabla.
 
 ---
@@ -89,3 +85,7 @@ Aquí se almacena la información de los diferentes puntos de venta.
 | `9024493554530757353` | `Off Premise` | `Convenience`  | `80751` |
 | `8659197371382902429` | `On Premise`  | `Restaurant`   | `80439` |
 | `1400854873763881130` | `On Premise`  | `Restaurant`   | `30093` |
+
+A continuación se muestra el esquema de la relación entre las tablas:
+
+![Diagrama de relación de tablas de la base de datos](https://raw.githubusercontent.com/spereze27/Desafio-Tecnico-Hackathon-Forecast-Big-Data-2025/main/union_tablas.png)
